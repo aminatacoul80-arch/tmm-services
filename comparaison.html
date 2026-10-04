@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TMM Services — Versions de couleurs</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: 'DM Sans', system-ui, sans-serif; background: #e9edf3; color: #0d1a2e; }
+  header { padding: 32px 24px 8px; max-width: 1500px; margin: 0 auto; }
+  h1 { font-family: Sora, sans-serif; font-size: 26px; margin: 0 0 6px; }
+  header p { margin: 0; color: #46546b; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 24px; padding: 24px; max-width: 1500px; margin: 0 auto; }
+  .card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 10px 30px rgba(13,26,46,0.08); display: flex; flex-direction: column; }
+  .card__head { padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .card__title { font-family: Sora, sans-serif; font-weight: 700; font-size: 17px; }
+  .card__sub { font-size: 13.5px; color: #5d6b82; margin-top: 2px; }
+  .swatches { display: flex; gap: 6px; flex: none; }
+  .swatches span { width: 22px; height: 22px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.1); }
+  .frame { position: relative; height: 640px; overflow: hidden; border-top: 1px solid #e3e8f0; }
+  .frame iframe { width: 1280px; height: 1600px; border: 0; transform: scale(0.4); transform-origin: 0 0; position: absolute; top: 0; left: 0; }
+  .card a { display: block; text-align: center; padding: 14px; font-weight: 700; text-decoration: none; color: #0d1a2e; border-top: 1px solid #e3e8f0; }
+  .card a:hover { background: #f3f5f9; }
+</style>
+</head>
+<body>
+<header>
+  <h1>TMM Services : 3 versions de couleurs</h1>
+  <p>Même mise en page, trois ambiances. Cliquez sur « Voir le site complet » pour parcourir chaque version.</p>
+</header>
+<div class="grid">
+  <div class="card">
+    <div class="card__head"><div><div class="card__title">A · Rouge TMM</div><div class="card__sub">Version actuelle, sombre, couleurs du logo</div></div>
+      <div class="swatches"><span style="background:#0b1628"></span><span style="background:#e3141f"></span><span style="background:#fff"></span></div></div>
+    <div class="frame"><iframe src="index.html" title="Version A" loading="lazy" tabindex="-1"></iframe></div>
+    <a href="index.html" target="_blank">Voir le site complet →</a>
+  </div>
+  <div class="card">
+    <div class="card__head"><div><div class="card__title">B · Bleu électrique</div><div class="card__sub">Sombre, accent bleu « technologie »</div></div>
+      <div class="swatches"><span style="background:#0b1628"></span><span style="background:#1f7bff"></span><span style="background:#fff"></span></div></div>
+    <div class="frame"><iframe src="index.html?theme=bleu" title="Version B" loading="lazy" tabindex="-1"></iframe></div>
+    <a href="index.html?theme=bleu" target="_blank">Voir le site complet →</a>
+  </div>
+  <div class="card">
+    <div class="card__head"><div><div class="card__title">C · Claire</div><div class="card__sub">Fond blanc, accents rouges TMM</div></div>
+      <div class="swatches"><span style="background:#fff"></span><span style="background:#e3141f"></span><span style="background:#0b1628"></span></div></div>
+    <div class="frame"><iframe src="index.html?theme=clair" title="Version C" loading="lazy" tabindex="-1"></iframe></div>
+    <a href="index.html?theme=clair" target="_blank">Voir le site complet →</a>
+  </div>
+</div>
+</body>
+</html>
