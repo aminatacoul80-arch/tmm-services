@@ -6,9 +6,9 @@
   var W = function (f) { return 'https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(f) + '?width=1400'; };
 
   var highlights = [
+    { icon: 'ph-van', title: 'Intervention mobile', sub: 'À domicile, au travail, sur la route' },
     { icon: 'ph-lightning', title: 'Hybride & électrique', sub: 'Batterie, onduleur, recharge' },
     { icon: 'ph-cpu', title: 'Diagnostic électronique', sub: 'Valise OBD multimarque' },
-    { icon: 'ph-car-profile', title: 'Toutes motorisations', sub: 'Essence, diesel, hybride, électrique' },
     { icon: 'ph-chats-circle', title: 'Conseil technique', sub: 'Avant chaque intervention' }
   ];
 
@@ -34,11 +34,11 @@
 
   var checks = ['Lecture des codes de défaut', 'Effacement des codes après réparation', 'Données moteur en direct', 'Calculateurs moteur (ECU)', 'Antidémarrage et clés', 'Capteurs et faisceaux électriques', 'Systèmes hybrides et électriques'];
 
-  var equipment = [
-    { icon: 'ph-plugs-connected', name: 'Valise de diagnostic OBD', use: 'Lecture des défauts' },
-    { icon: 'ph-key', name: 'Programmateur de clés', use: 'Transpondeurs' },
-    { icon: 'ph-cpu', name: 'Programmateur ECU', use: 'Calculateurs' },
-    { icon: 'ph-snowflake', name: 'Station de climatisation', use: 'Recharge' }
+  var mobility = [
+    { icon: 'ph-house', name: 'À domicile', use: 'Sur rendez-vous, devant chez vous' },
+    { icon: 'ph-buildings', name: 'Sur votre lieu de travail', use: 'Pendant que vous travaillez' },
+    { icon: 'ph-road-horizon', name: 'Panne sur la route', use: 'Véhicule immobilisé à Kati' },
+    { icon: 'ph-toolbox', name: 'Matériel embarqué', use: 'Valise OBD, programmateurs de clés et ECU' }
   ];
 
   var gallery = [
@@ -82,7 +82,7 @@
   fill('checks', checks, function (c) {
     return '<span class="check"><i class="ph-duotone ph-check-circle"></i>' + esc(c) + '</span>';
   });
-  fill('equipment', equipment, function (e) {
+  fill('mobility', mobility, function (e) {
     return '<div class="equip"><i class="ph-duotone ' + e.icon + '"></i><span class="equip__text"><span class="equip__name">' +
       esc(e.name) + '</span><span class="equip__use">' + esc(e.use) + '</span></span></div>';
   });
