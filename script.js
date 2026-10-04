@@ -32,7 +32,7 @@
     { icon: 'ph-shield-check', title: 'Sécurité haute tension', sub: 'Mise hors tension et consignation avant toute intervention sur le véhicule.' }
   ];
 
-  var checks = ['Lecture des codes de défaut', 'Effacement des codes après réparation', 'Données du moteur en direct', 'Calculateurs moteur (ECU)', 'Antidémarrage et clés', 'Capteurs et faisceaux électriques', 'Systèmes hybrides et électriques'];
+  var checks = ['Lecture des codes de défaut', 'Effacement des codes après réparation', 'Données moteur en direct', 'Calculateurs moteur (ECU)', 'Antidémarrage et clés', 'Capteurs et faisceaux électriques', 'Systèmes hybrides et électriques'];
 
   var equipment = [
     { icon: 'ph-plugs-connected', name: 'Valise de diagnostic OBD', use: 'Lecture des défauts' },
