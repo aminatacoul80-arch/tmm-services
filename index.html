@@ -1,20 +1,21 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="clair">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TMM Services — Mécatronique automobile à Kati</title>
-<meta name="description" content="Toure Maintenance et Multi Services : mécatronique et maintenance automobile à Kati (Koulikoro, Mali). Diagnostic, hybride et électrique, programmation de clés et ECU.">
+<meta name="description" content="Touré Maintenance et Multi-services : mécatronique et maintenance automobile à Kati (Koulikoro, Mali). Diagnostic, hybride et électrique, programmation de clés et ECU.">
 <link rel="icon" href="assets/logo-tmm.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=DM+Sans:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
 <link rel="stylesheet" href="styles.css">
 <script>
-  // Version de couleurs : index.html?theme=bleu ou ?theme=clair (par défaut : rouge TMM)
+  // Version de couleurs : par défaut claire (choix du client) ; index.html?theme=rouge ou ?theme=bleu pour les autres
   (function () {
     var t = new URLSearchParams(location.search).get('theme');
-    if (t === 'bleu' || t === 'clair') document.documentElement.setAttribute('data-theme', t);
+    if (t === 'rouge') document.documentElement.removeAttribute('data-theme');
+    else if (t === 'bleu') document.documentElement.setAttribute('data-theme', t);
   })();
 </script>
 </head>
@@ -31,7 +32,7 @@
     </a>
     <nav class="nav" aria-label="Navigation principale">
       <a href="#services">Services</a>
-      <a href="#hybride" class="nav__hl">Hybride / EV</a>
+      <a href="#hybride" class="nav__hl">Hybride / électrique</a>
       <a href="#atelier">Atelier</a>
       <a href="#realisations">Réalisations</a>
       <a href="#contact">Contact</a>
@@ -40,7 +41,7 @@
   </div>
   <nav id="mobile-nav" class="mobile-nav" hidden>
     <a href="#services">Services</a>
-    <a href="#hybride" class="acc">Hybride / EV</a>
+    <a href="#hybride" class="acc">Hybride / électrique</a>
     <a href="#atelier">Atelier</a>
     <a href="#realisations">Réalisations</a>
     <a href="#contact">Contact</a>
@@ -63,10 +64,10 @@
       <span>L’innovation technologique</span>
       <span class="acc">à votre portée.</span>
     </h1>
-    <p class="hero__lead">Toure Maintenance et Multi Services est une entreprise spécialisée en mécatronique et maintenance automobile, à Kati, région de Koulikoro.</p>
+    <p class="hero__lead">Touré Maintenance et Multi-services est une entreprise spécialisée en mécatronique et maintenance automobile, à Kati, région de Koulikoro.</p>
     <div class="btn-row">
       <a href="https://wa.me/22370190719" target="_blank" rel="noopener" class="btn btn--primary"><i class="ph-duotone ph-whatsapp-logo"></i>Écrire sur WhatsApp</a>
-      <a href="tel:+22370190719" class="btn btn--ghost"><i class="ph-duotone ph-phone"></i>70 19 07 19</a>
+      <a href="tel:+22370190719" class="btn btn--ghost"><i class="ph-duotone ph-phone"></i>+223 70 19 07 19</a>
     </div>
   </div>
   <div class="hero__bar">
@@ -100,7 +101,7 @@
       <div class="ev-media">
         <img src="https://images.unsplash.com/photo-1692061157268-b128a8f37d6d?auto=format&fit=crop&q=80&w=1400" alt="Véhicule électrique en charge" class="cover" loading="lazy">
         <div class="ev-tags">
-          <span class="tag"><i class="ph-duotone ph-leaf"></i>Hybride HEV / PHEV</span>
+          <span class="tag"><i class="ph-duotone ph-leaf"></i>Hybride simple ou rechargeable</span>
           <span class="tag"><i class="ph-duotone ph-plug-charging"></i>100 % électrique</span>
         </div>
       </div>
@@ -177,20 +178,20 @@
     <div class="stack">
       <a href="#accueil" class="brand brand--lg">
         <span class="brand__logo"><img src="assets/logo-tmm.jpg" alt="Logo TMM"></span>
-        <span class="brand__full">Toure Maintenance et Multi Services</span>
+        <span class="brand__full">Touré Maintenance et Multi-services</span>
       </a>
       <div class="contact__list">
         <span><i class="ph-duotone ph-map-pin"></i>Kati, région de Koulikoro, Mali</span>
         <a href="tel:+22370190719"><i class="ph-duotone ph-phone"></i>+223 70 19 07 19</a>
         <a href="https://wa.me/22370190719" target="_blank" rel="noopener"><i class="ph-duotone ph-whatsapp-logo"></i>WhatsApp : +223 70 19 07 19</a>
         <a href="mailto:tmm.service7@gmail.com"><i class="ph-duotone ph-envelope-simple"></i>tmm.service7@gmail.com</a>
-        <a href="https://www.facebook.com/share/1Kd8cfy2LS/" target="_blank" rel="noopener"><i class="ph-duotone ph-facebook-logo"></i>Facebook : Toure Maintenance et Multi Services</a>
+        <a href="https://www.facebook.com/share/1Kd8cfy2LS/" target="_blank" rel="noopener"><i class="ph-duotone ph-facebook-logo"></i>Facebook : Touré Maintenance et Multi-services</a>
       </div>
     </div>
     <iframe title="Carte — Kati, Mali" src="https://maps.google.com/maps?q=Kati%2C%20Mali&amp;z=13&amp;output=embed" loading="lazy" class="map"></iframe>
   </div>
   <footer class="container footer">
-    <span>© 2026 Toure Maintenance et Multi Services — Kati, Mali</span>
+    <span>© 2026 Touré Maintenance et Multi-services — Kati, Mali</span>
     <span class="footer__credits">Photos : Unsplash (licence Unsplash) et Wikimedia Commons (licences Creative Commons). Logos : Simple Icons, Wikimedia Commons. Les marques citées appartiennent à leurs propriétaires.</span>
   </footer>
 </section>
