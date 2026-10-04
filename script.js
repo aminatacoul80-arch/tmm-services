@@ -32,7 +32,7 @@
     { icon: 'ph-shield-check', title: 'Sécurité haute tension', sub: 'Mise hors tension et consignation avant toute intervention sur le véhicule.' }
   ];
 
-  var checks = ['Lecture des codes défaut', 'Effacement après réparation', 'Données moteur en direct', 'Calculateurs moteur (ECU)', 'Antidémarrage et clés', 'Capteurs et faisceaux', 'Systèmes hybrides et électriques'];
+  var checks = ['Lecture des codes de défaut', 'Effacement des codes après réparation', 'Données du moteur en direct', 'Calculateurs moteur (ECU)', 'Antidémarrage et clés', 'Capteurs et faisceaux électriques', 'Systèmes hybrides et électriques'];
 
   var equipment = [
     { icon: 'ph-plugs-connected', name: 'Valise de diagnostic OBD', use: 'Lecture des défauts' },
@@ -43,7 +43,7 @@
 
   var gallery = [
     { label: 'Programmation d’une clé', src: 'assets/v2-gal-1.webp' },
-    { label: 'Lecture des codes défaut', src: W('OBD2 computer scan results.jpeg') },
+    { label: 'Lecture des codes de défaut', src: W('OBD2 computer scan results.jpeg') },
     { label: 'Vidange et lubrifiants', src: 'assets/v2-gal-3.webp' },
     { label: 'Données moteur sur valise OBD', src: W('OBD2 Datenanzeigee.JPG') },
     { label: 'Contrôle du compartiment moteur', src: U('photo-1587004461511-ded665a2e4b9') },
