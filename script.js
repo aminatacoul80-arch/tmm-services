@@ -37,7 +37,7 @@
   var mobility = [
     { icon: 'ph-house', name: 'À domicile', use: 'Sur rendez-vous, devant chez vous' },
     { icon: 'ph-buildings', name: 'Sur votre lieu de travail', use: 'Pendant que vous travaillez' },
-    { icon: 'ph-road-horizon', name: 'Panne sur la route', use: 'Véhicule immobilisé à Kati' },
+    { icon: 'ph-road-horizon', name: 'Panne sur la route', use: 'Véhicule immobilisé à Bamako ou à Kati' },
     { icon: 'ph-toolbox', name: 'Matériel embarqué', use: 'Valise OBD, programmateurs de clés et ECU' }
   ];
 
