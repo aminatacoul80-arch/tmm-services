@@ -53,33 +53,54 @@
 
 <main>
 <section id="accueil" class="hero">
-  <!-- Vue éclatée : l'alternateur se démonte au défilement (images dans assets/alternateur/) -->
+  <!-- Vue éclatée : 4 chapitres ; au défilement, l'alternateur se démonte et la caméra s'approche puis recule (images dans assets/alternateur/) -->
   <div class="eclate" id="eclate">
     <div class="eclate__stage">
-      <div class="hero__content">
-        <div>
+      <div class="eclate__visual">
+        <img id="eclate-img" src="assets/alternateur/l/47.webp" alt="Alternateur démonté : poulie, flasque avant, stator, rotor, flasque arrière et régulateur" width="1600" height="800">
+        <canvas id="eclate-canvas" aria-hidden="true" hidden></canvas>
+        <div class="eclate__labels" id="eclate-labels" aria-hidden="true"></div>
+      </div>
+      <div class="eclate__chapters container">
+        <div class="chap is-on">
           <span class="eyebrow">Mécatronique mobile · Bamako et Kati</span>
           <h1 class="hero__title">
             <span>L’innovation technologique</span>
             <span class="acc">à votre portée.</span>
           </h1>
-        </div>
-        <div>
           <p class="hero__lead">Touré Maintenance et Multi-Services est une entreprise spécialisée en mécatronique et en maintenance automobile, établie à Kati dans la région de Koulikoro (Mali).</p>
           <div class="btn-row">
             <a href="https://wa.me/22370190719" target="_blank" rel="noopener" class="btn btn--primary"><i class="ph-duotone ph-whatsapp-logo"></i>Écrire sur WhatsApp</a>
             <a href="tel:+22370190719" class="btn btn--ghost"><i class="ph-duotone ph-phone"></i>+223 70 19 07 19</a>
           </div>
         </div>
+        <div class="chap">
+          <span class="eyebrow">Vue éclatée</span>
+          <h2 class="chap__title">Un alternateur, <span class="acc">six pièces.</span></h2>
+          <p class="hero__lead">Poulie, flasques, stator, rotor, régulateur : quand la batterie ne se recharge plus, la panne se cache souvent dans l’une d’elles.</p>
+        </div>
+        <div class="chap">
+          <span class="eyebrow">Gros plan</span>
+          <h2 class="chap__title">Le cœur <span class="acc">de la charge.</span></h2>
+          <p class="hero__lead">Le rotor tourne à l’intérieur du stator : c’est là que naît le courant qui recharge votre batterie et alimente tout le véhicule.</p>
+        </div>
+        <div class="chap">
+          <span class="eyebrow">Diagnostic à domicile</span>
+          <h2 class="chap__title">Chaque pièce <span class="acc">se contrôle.</span></h2>
+          <p class="hero__lead">Notre équipe mobile vient chez vous, à Bamako et à Kati, avec la valise de diagnostic : on trouve la pièce en cause avant de réparer.</p>
+          <div class="btn-row">
+            <a href="https://wa.me/22370190719" target="_blank" rel="noopener" class="btn btn--primary"><i class="ph-duotone ph-whatsapp-logo"></i>Demander une intervention</a>
+          </div>
+        </div>
       </div>
-      <div class="eclate__visual">
-        <img id="eclate-img" src="assets/alternateur/l/47.webp" alt="Alternateur démonté : poulie, flasque avant, stator, rotor, flasque arrière et régulateur" width="1600" height="800">
-        <canvas id="eclate-canvas" aria-hidden="true" hidden></canvas>
-        <div class="eclate__labels" id="eclate-labels" aria-hidden="true"></div>
-      </div>
+      <ol class="eclate__index" id="eclate-index" aria-label="Chapitres de la vue éclatée">
+        <li><button type="button" aria-current="step">01</button></li>
+        <li><button type="button">02</button></li>
+        <li><button type="button">03</button></li>
+        <li><button type="button">04</button></li>
+      </ol>
       <div class="eclate__foot container">
-        <span>Alternateur · <b>6 pièces</b></span>
-        <span class="eclate__state" id="eclate-state">Chaque pièce se contrôle</span>
+        <span class="eclate__hint"><i class="ph-duotone ph-arrow-down"></i><span id="eclate-state">Faites défiler</span></span>
         <span class="eclate__prog"><i id="eclate-prog"></i></span>
       </div>
     </div>

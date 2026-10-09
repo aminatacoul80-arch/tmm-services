@@ -114,9 +114,10 @@
   mnav.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
   window.addEventListener('resize', function () { if (window.innerWidth >= 760) setMenu(false); });
 
-  // ---------- Hero : l'alternateur se démonte au défilement ----------
+  // ---------- Hero : l'alternateur se démonte au défilement, la caméra s'approche puis recule ----------
   // 48 images rendues dans Blender (assets/alternateur/l : 1600 px, m : 900 px) ;
-  // etiquettes.json donne, pour chaque image, la position des pièces (0 à 1 dans l'image)
+  // etiquettes.json donne, pour chaque image, la position des pièces (0 à 1 dans l'image).
+  // Toutes les coordonnées ci-dessous sont en pixels d'une image de 1600 × 800.
   (function () {
     var story = document.getElementById('eclate');
     var canvas = document.getElementById('eclate-canvas');
@@ -124,56 +125,114 @@
     var layer = document.getElementById('eclate-labels');
     var bar = document.getElementById('eclate-prog');
     var state = document.getElementById('eclate-state');
+    var chaps = story ? story.querySelectorAll('.chap') : [];
+    var dots = document.querySelectorAll('#eclate-index button');
     if (!story || !canvas.getContext || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    var N = 48, W = 1600, H = 800;
-    var dir = 'assets/alternateur/' + (innerWidth * (devicePixelRatio || 1) > 1200 ? 'l' : 'm') + '/';
+    var N = 48, W = 1600, H = 800, px = innerWidth * (devicePixelRatio || 1);
+    var dir = 'assets/alternateur/' + (px > 900 ? 'l' : 'm') + '/';
     var noms = [['poulie', 'Poulie'], ['flasque-avant', 'Flasque avant'], ['stator', 'Stator'], ['rotor', 'Rotor'], ['flasque-arriere', 'Flasque arrière'], ['regulateur', 'Régulateur']];
-    var ctx = canvas.getContext('2d'), frames = [], pos = null, lbls = [], cur = 0, target = 0, last = -1;
+    var ctx = canvas.getContext('2d'), frames = [], pos = null, lbls = [], cur = 0, target = 0, last = '', chap = -1;
+
+    // Chapitres : début de chaque chapitre dans le défilement (0 à 1)
+    var DEBUTS = [0, 0.24, 0.52, 0.8];
+    var ETATS = ['Faites défiler', 'Démontage', 'Gros plan', 'Chaque pièce se contrôle'];
+    // Démontage : de l'image 0 à 47 entre ces deux points du défilement
+    var DEMONTE = [0.16, 0.5];
+    // Caméra : [défilement, centre x, centre y, zoom] ; zoom 1 = vue éclatée entière
+    var CAM = [
+      [0.00, 1100, 410, 1.45],
+      [0.16, 1090, 395, 1.6],
+      [0.50, 850, 420, 1.0],
+      [0.60, 690, 330, 2.5],
+      [0.72, 690, 330, 2.7],
+      [0.82, 850, 420, 1.0],
+      [1.00, 850, 420, 1.0]
+    ];
+    // Étiquettes visibles par chapitre
+    var VISIBLES = [[], [], ['stator', 'rotor'], ['poulie', 'flasque-avant', 'stator', 'rotor', 'flasque-arriere', 'regulateur']];
 
     for (var i = 0; i < N; i++) {
       frames[i] = new Image();
       frames[i].decoding = 'async';
       frames[i].src = dir + (i < 10 ? '0' : '') + i + '.webp';
     }
-    frames[0].onload = function () { canvas.hidden = false; still.hidden = true; last = -1; };
+    frames[0].onload = function () { canvas.hidden = false; still.hidden = true; last = ''; };
 
     layer.innerHTML = noms.map(function (n, k) {
       return '<span class="eclate-lbl' + (k % 2 ? ' eclate-lbl--bas' : '') + '"><span class="eclate-lbl__tag"><b>0' + (k + 1) + '</b><span>' +
         esc(n[1]) + '</span></span><span class="eclate-lbl__line"></span><span class="eclate-lbl__dot"></span></span>';
     }).join('');
     lbls = layer.children;
-    fetch('assets/alternateur/etiquettes.json').then(function (r) { return r.json(); }).then(function (d) { pos = d.etiquettes; last = -1; }).catch(function () {});
+    fetch('assets/alternateur/etiquettes.json').then(function (r) { return r.json(); }).then(function (d) { pos = d.etiquettes; last = ''; }).catch(function () {});
 
-    function progress() {
-      var r = story.getBoundingClientRect(), span = story.offsetHeight - innerHeight;
-      return Math.min(1, Math.max(0, -r.top / (span > 0 ? span : 1)));
+    function clamp(v) { return Math.min(1, Math.max(0, v)); }
+    function lisse(t) { return t * t * (3 - 2 * t); }
+    function span() { var s = story.offsetHeight - innerHeight; return s > 0 ? s : 1; }
+    function progress() { return clamp(-story.getBoundingClientRect().top / span()); }
+
+    // Caméra au point p du défilement : interpolation douce entre les clés
+    function camera(p) {
+      for (var i = 1; i < CAM.length; i++) {
+        if (p <= CAM[i][0]) {
+          var a = CAM[i - 1], b = CAM[i], t = lisse(clamp((p - a[0]) / (b[0] - a[0])));
+          return [a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t];
+        }
+      }
+      var z = CAM[CAM.length - 1]; return [z[1], z[2], z[3]];
     }
-    // Rectangle occupé par l'image (comme object-fit: contain)
-    function boite() {
-      var cw = canvas.clientWidth, ch = canvas.clientHeight, s = Math.min(cw / W, ch / H);
-      return { x: (cw - W * s) / 2, y: (ch - H * s) / 2, w: W * s, h: H * s, cw: cw, ch: ch };
+    // Où l'objet se place à l'écran, et à quelle taille la vue éclatée entière (1060 × 540) tient
+    function cadre(cw, ch) {
+      if (cw < 760) return { x: cw * 0.5, y: ch * 0.68, s: Math.min(cw * 0.94 / 1060, ch * 0.4 / 540) };
+      return { x: cw * 0.62, y: ch * 0.5, s: Math.min(cw * 0.56 / 1060, ch * 0.7 / 540) };
     }
+
+    function setChap(c) {
+      if (c === chap) return;
+      chap = c;
+      for (var i = 0; i < chaps.length; i++) {
+        chaps[i].classList.toggle('is-on', i === c);
+        if (i === c) chaps[i].removeAttribute('inert'); else chaps[i].setAttribute('inert', '');
+      }
+      for (var j = 0; j < dots.length; j++) {
+        if (j === c) dots[j].setAttribute('aria-current', 'step'); else dots[j].removeAttribute('aria-current');
+      }
+      state.textContent = ETATS[c];
+    }
+
     function paint(p) {
-      var f = Math.min(N - 1, Math.round(Math.min(1, p / 0.8) * (N - 1)));
+      var f = Math.round(clamp((p - DEMONTE[0]) / (DEMONTE[1] - DEMONTE[0])) * (N - 1));
       var img = frames[f];
       if (!img.complete || !img.naturalWidth) { for (var k = f; k >= 0; k--) if (frames[k].complete && frames[k].naturalWidth) { img = frames[k]; f = k; break; } }
-      var b = boite(), dpr = devicePixelRatio || 1;
-      if (f !== last || canvas.width !== Math.round(b.cw * dpr)) {
-        canvas.width = Math.round(b.cw * dpr); canvas.height = Math.round(b.ch * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, b.cw, b.ch);
-        if (img.naturalWidth) ctx.drawImage(img, b.x, b.y, b.w, b.h);
-        last = f;
+      var cw = canvas.clientWidth, ch = canvas.clientHeight, dpr = devicePixelRatio || 1;
+      var cam = camera(p), fr = cadre(cw, ch), s = fr.s * cam[2];
+      var ox = fr.x - cam[0] * s, oy = fr.y - cam[1] * s;
+      var cle = f + '|' + ox.toFixed(1) + '|' + oy.toFixed(1) + '|' + s.toFixed(4) + '|' + cw + '|' + ch;
+      if (cle !== last) {
+        if (canvas.width !== Math.round(cw * dpr) || canvas.height !== Math.round(ch * dpr)) { canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr); }
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, cw, ch);
+        ctx.imageSmoothingQuality = 'high';
+        if (img.naturalWidth) ctx.drawImage(img, ox, oy, W * s, H * s);
+        last = cle;
       }
-      var e = f / (N - 1);
+      var c = 0;
+      for (var i = DEBUTS.length - 1; i >= 0; i--) if (p >= DEBUTS[i]) { c = i; break; }
+      setChap(c);
       for (var j = 0; j < lbls.length; j++) {
-        var k2 = Math.min(1, Math.max(0, (e - 0.6 - j * 0.05) / 0.2));
-        lbls[j].style.opacity = pos ? k2 : 0;
-        if (pos) { var c = pos[f][noms[j][0]]; lbls[j].style.left = (b.x + c[0] * b.w) + 'px'; lbls[j].style.top = (b.y + c[1] * b.h) + 'px'; }
+        var on = pos && VISIBLES[c].indexOf(noms[j][0]) >= 0;
+        lbls[j].style.opacity = on ? 1 : 0;
+        if (pos) { var q = pos[f][noms[j][0]]; lbls[j].style.left = (ox + q[0] * W * s) + 'px'; lbls[j].style.top = (oy + q[1] * H * s) + 'px'; }
       }
       bar.style.transform = 'scaleX(' + p.toFixed(3) + ')';
-      state.textContent = e > 0.98 ? 'Chaque pièce se contrôle' : 'Faites défiler pour le démonter';
     }
+
+    // Index 01-04 : aller au milieu d'un chapitre
+    Array.prototype.forEach.call(dots, function (d, i) {
+      d.addEventListener('click', function () {
+        var fin = i + 1 < DEBUTS.length ? DEBUTS[i + 1] : 1, p = i === 0 ? 0 : (DEBUTS[i] + fin) / 2;
+        scrollTo({ top: story.getBoundingClientRect().top + scrollY + p * span(), behavior: 'smooth' });
+      });
+    });
     // Lissage : l'image suit le défilement sans à-coups
     function loop() { target = progress(); cur += (target - cur) * 0.15; if (Math.abs(target - cur) < 0.0005) cur = target; paint(cur); requestAnimationFrame(loop); }
     // Test : ?p=0.5 fige l'animation à mi-course pour les captures
