@@ -183,7 +183,7 @@
     }
     // Où l'objet se place à l'écran, et à quelle taille la vue éclatée entière (1060 × 540) tient
     function cadre(cw, ch) {
-      if (cw < 760) return { x: cw * 0.5, y: ch * 0.68, s: Math.min(cw * 0.94 / 1060, ch * 0.4 / 540) };
+      if (cw < 760) return { x: cw * 0.47, y: ch * 0.7, s: Math.min(cw * 0.86 / 1060, ch * 0.38 / 540) };
       return { x: cw * 0.62, y: ch * 0.5, s: Math.min(cw * 0.56 / 1060, ch * 0.7 / 540) };
     }
 
