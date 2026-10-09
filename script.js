@@ -114,18 +114,73 @@
   mnav.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
   window.addEventListener('resize', function () { if (window.innerWidth >= 760) setMenu(false); });
 
-  // ---------- Vidéo hero (optionnelle) ----------
-  var heroVideo = document.getElementById('hero-video');
-  var heroSrc = (heroVideo.getAttribute('data-video') || '').trim();
-  if (heroSrc) {
-    heroVideo.muted = true;
-    heroVideo.src = heroSrc;
-    heroVideo.addEventListener('loadeddata', function () {
-      heroVideo.hidden = false;
-      document.getElementById('hero-img').hidden = true;
-    });
-    heroVideo.play().catch(function () {});
-  }
+  // ---------- Hero : l'alternateur se démonte au défilement ----------
+  // 48 images rendues dans Blender (assets/alternateur/l : 1600 px, m : 900 px) ;
+  // etiquettes.json donne, pour chaque image, la position des pièces (0 à 1 dans l'image)
+  (function () {
+    var story = document.getElementById('eclate');
+    var canvas = document.getElementById('eclate-canvas');
+    var still = document.getElementById('eclate-img');
+    var layer = document.getElementById('eclate-labels');
+    var bar = document.getElementById('eclate-prog');
+    var state = document.getElementById('eclate-state');
+    if (!story || !canvas.getContext || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var N = 48, W = 1600, H = 800;
+    var dir = 'assets/alternateur/' + (innerWidth * (devicePixelRatio || 1) > 1200 ? 'l' : 'm') + '/';
+    var noms = [['poulie', 'Poulie'], ['flasque-avant', 'Flasque avant'], ['stator', 'Stator'], ['rotor', 'Rotor'], ['flasque-arriere', 'Flasque arrière'], ['regulateur', 'Régulateur']];
+    var ctx = canvas.getContext('2d'), frames = [], pos = null, lbls = [], cur = 0, target = 0, last = -1;
+
+    for (var i = 0; i < N; i++) {
+      frames[i] = new Image();
+      frames[i].decoding = 'async';
+      frames[i].src = dir + (i < 10 ? '0' : '') + i + '.webp';
+    }
+    frames[0].onload = function () { canvas.hidden = false; still.hidden = true; last = -1; };
+
+    layer.innerHTML = noms.map(function (n, k) {
+      return '<span class="eclate-lbl' + (k % 2 ? ' eclate-lbl--bas' : '') + '"><span class="eclate-lbl__tag"><b>0' + (k + 1) + '</b><span>' +
+        esc(n[1]) + '</span></span><span class="eclate-lbl__line"></span><span class="eclate-lbl__dot"></span></span>';
+    }).join('');
+    lbls = layer.children;
+    fetch('assets/alternateur/etiquettes.json').then(function (r) { return r.json(); }).then(function (d) { pos = d.etiquettes; last = -1; }).catch(function () {});
+
+    function progress() {
+      var r = story.getBoundingClientRect(), span = story.offsetHeight - innerHeight;
+      return Math.min(1, Math.max(0, -r.top / (span > 0 ? span : 1)));
+    }
+    // Rectangle occupé par l'image (comme object-fit: contain)
+    function boite() {
+      var cw = canvas.clientWidth, ch = canvas.clientHeight, s = Math.min(cw / W, ch / H);
+      return { x: (cw - W * s) / 2, y: (ch - H * s) / 2, w: W * s, h: H * s, cw: cw, ch: ch };
+    }
+    function paint(p) {
+      var f = Math.min(N - 1, Math.round(Math.min(1, p / 0.8) * (N - 1)));
+      var img = frames[f];
+      if (!img.complete || !img.naturalWidth) { for (var k = f; k >= 0; k--) if (frames[k].complete && frames[k].naturalWidth) { img = frames[k]; f = k; break; } }
+      var b = boite(), dpr = devicePixelRatio || 1;
+      if (f !== last || canvas.width !== Math.round(b.cw * dpr)) {
+        canvas.width = Math.round(b.cw * dpr); canvas.height = Math.round(b.ch * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, b.cw, b.ch);
+        if (img.naturalWidth) ctx.drawImage(img, b.x, b.y, b.w, b.h);
+        last = f;
+      }
+      var e = f / (N - 1);
+      for (var j = 0; j < lbls.length; j++) {
+        var k2 = Math.min(1, Math.max(0, (e - 0.6 - j * 0.05) / 0.2));
+        lbls[j].style.opacity = pos ? k2 : 0;
+        if (pos) { var c = pos[f][noms[j][0]]; lbls[j].style.left = (b.x + c[0] * b.w) + 'px'; lbls[j].style.top = (b.y + c[1] * b.h) + 'px'; }
+      }
+      bar.style.transform = 'scaleX(' + p.toFixed(3) + ')';
+      state.textContent = e > 0.98 ? 'Chaque pièce se contrôle' : 'Faites défiler pour le démonter';
+    }
+    // Lissage : l'image suit le défilement sans à-coups
+    function loop() { target = progress(); cur += (target - cur) * 0.15; if (Math.abs(target - cur) < 0.0005) cur = target; paint(cur); requestAnimationFrame(loop); }
+    // Test : ?p=0.5 fige l'animation à mi-course pour les captures
+    var fixed = new URLSearchParams(location.search).get('p');
+    if (fixed !== null) { var go = function () { paint(+fixed); requestAnimationFrame(go); }; go(); return; }
+    loop();
+  })();
 
   // ---------- Vidéo diagnostic : extrait de 15 s en boucle ----------
   var diag = document.getElementById('diag-video');
@@ -139,4 +194,28 @@
     if (diag.currentTime >= start + len || diag.currentTime < start) restart();
   });
   diag.addEventListener('error', function () { diag.hidden = true; diagImg.hidden = false; });
+
+  // ---------- Carte OpenStreetMap : Kati et Bamako ----------
+  var carte = document.getElementById('carte');
+  if (carte && window.L) {
+    carte.innerHTML = '';
+    var map = L.map(carte, { scrollWheelZoom: false });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">contributeurs OpenStreetMap</a>'
+    }).addTo(map);
+    var lieux = [
+      { nom: 'Kati', texte: 'Base de l’équipe TMM', pos: [12.7445, -8.0729] },
+      { nom: 'Bamako', texte: 'Intervention mobile', pos: [12.6392, -8.0029] }
+    ];
+    var points = lieux.map(function (l) {
+      L.marker(l.pos, {
+        title: l.nom,
+        icon: L.divIcon({ className: '', html: '<span class="map-pin"><span class="map-pin__dot"></span><span class="map-pin__label">' + l.nom + '</span></span>' })
+      }).addTo(map).bindPopup('<strong>' + l.nom + '</strong><br>' + l.texte);
+      return l.pos;
+    });
+    L.polyline(points, { color: '#e3141f', weight: 3, dashArray: '6 8' }).addTo(map);
+    map.fitBounds(points, { padding: [60, 60] });
+  }
 })();
