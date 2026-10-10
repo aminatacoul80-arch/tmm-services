@@ -112,7 +112,7 @@
   }
   btn.addEventListener('click', function () { setMenu(mnav.hidden); });
   mnav.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
-  window.addEventListener('resize', function () { if (window.innerWidth >= 760) setMenu(false); });
+  window.addEventListener('resize', function () { if (window.innerWidth >= 1200) setMenu(false); });
 
   // ---------- Hero : l'alternateur se démonte au défilement, la caméra s'approche puis recule ----------
   // 48 images rendues dans Blender (assets/alternateur/l : 1600 px, m : 900 px) ;
